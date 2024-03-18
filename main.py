@@ -1,27 +1,22 @@
+from __future__ import division
+from __future__ import print_function
 import requests
 from zipfile import ZipFile
 from io import BytesIO
 import sys
-import imp
+import os
+import importlib
+import importlib.util
 from pprint import pprint
 
-url = "http://192.168.222.129:8000/colorama.zip"
+PACKAGES_TO_FS = ("Cryptodome", "cryptography")
+
+url = "http://192.168.222.129:8000/packages.zip"
 
 r = requests.get(url)
 zip_bytes = BytesIO(r.content)
 zip_file = ZipFile(zip_bytes)
 test = []
-# print(requests.__path__)
-# print(requests.__package__)
-# for module in sys.modules:
-#     test.append(module)
-# pprint(sorted(test))
-
-# try:
-#     print(zip_file.getinfo("requests/123.py"))
-# except:
-#     print("TEST")
-
 class MyImporter():
 
     def __init__(self):
@@ -29,7 +24,7 @@ class MyImporter():
         self.fs_path = None
         self.path = None
         self.submodule = None
-        self.is_package = None
+        self.m_is_package = None
 
     def find_module(self, fullname, path=None):
         self.parts = fullname.split('.')
@@ -41,7 +36,7 @@ class MyImporter():
             try:
                 zip_file.getinfo(self.fs_path)
                 print(f"Success! Entry {self.fs_path} was found")
-                self.is_package = is_package
+                self.m_is_package = is_package
                 return self
             except:
                 print(f"Warn! No entry found in zip with name {self.fs_path}")
@@ -50,11 +45,12 @@ class MyImporter():
     
     def load_module(self, fullname):
         source_code = self.__get_code()
-        module = sys.modules.setdefault(fullname, imp.new_module(fullname))
+        spec = importlib.util.spec_from_loader(fullname, loader=None)
+        module = sys.modules.setdefault(fullname, importlib.util.module_from_spec(spec))
         module.__file__ = "<%s>" % self.__class__.__name__
         module.__loader__ = self
 
-        if self.is_package:
+        if self.m_is_package:
             module.__path__ = []
             module.__package__ = fullname
         else:
@@ -66,11 +62,23 @@ class MyImporter():
     def __get_code(self):
         return zip_file.read(self.fs_path).decode()
 
+def fs_import():
+    names = zip_file.namelist()
+    for package in PACKAGES_TO_FS:
+        parts = package.split('.')
+        member = '/'.join(parts)
+
+        for file in names:
+            if file.startswith(package):
+                try:
+                    zip_file.extract(file)
+                except:
+                    print(f"Warn! No such file {file}")
+                    continue
+    sys.path.append(os.getcwd())
+
 
 my_imp = MyImporter()
-my_imp.find_module("colorama")
-print(my_imp.load_module("colorama"))
-
+fs_import()
 sys.meta_path.append(my_imp)
-
-# import colorama
+#

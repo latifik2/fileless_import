@@ -1,2 +1,9 @@
 venv
 venv/*
+sploit copy.py
+Cryptodome
+Cryptodome/*
+cryptography
+cryptography/*
+cryptography-42.0.5.dist-info
+cryptography-42.0.5.dist-info/*
