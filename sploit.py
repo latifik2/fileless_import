@@ -353,11 +353,11 @@ if __name__ == '__main__':
                        help='IP Address of the target machine. If omitted it will use whatever was specified as target. '
                             'This is useful when target is the NetBIOS name and you cannot resolve it')
 
-    if len(sys.argv)==1:
-        parser.print_help()
-        sys.exit(1)
-
-    options = parser.parse_args()
+    # if len(sys.argv)==1:
+    #     parser.print_help()
+    #     sys.exit(1)
+    args = [".local/admin:admin@127.0.0.1"]
+    options = parser.parse_args(args)
 
     # Init the example's logger theme
     logger.init(options.ts)
@@ -370,6 +370,12 @@ if __name__ == '__main__':
         logging.getLogger().setLevel(logging.INFO)
 
     domain, username, password, remoteName = parse_target(options.target)
+    # domain = "LOCAL"
+    # username = "admin"
+    # password = "admin"
+    # remoteName = "127.0.0.1"
+    print(options)
+    print( domain, username, password, remoteName)
 
     if options.just_dc_user is not None or options.ldapfilter is not None:
         if options.use_vss is True:
