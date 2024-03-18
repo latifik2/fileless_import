@@ -1,6 +1,6 @@
 from __future__ import division
 from __future__ import print_function
-import requests
+import urllib.request
 from zipfile import ZipFile
 from io import BytesIO
 import sys
@@ -13,8 +13,9 @@ PACKAGES_TO_FS = ("Cryptodome", "cryptography")
 
 url = "http://192.168.222.128:8000/packages.zip"
 
-r = requests.get(url)
-zip_bytes = BytesIO(r.content)
+with urllib.request.urlopen(url) as r:
+    zip_bytes = BytesIO(r.read())
+
 zip_file = ZipFile(zip_bytes)
 test = []
 class MyImporter():
