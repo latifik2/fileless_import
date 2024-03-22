@@ -9,7 +9,7 @@ import importlib
 import importlib.util
 from pprint import pprint
 
-PACKAGES_TO_FS = ("Cryptodome", "cryptography")
+PACKAGES_TO_FS = ("Cryptodome", "cryptography", "cffi")
 
 url = "http://192.168.222.128:8000/packages.zip"
 
