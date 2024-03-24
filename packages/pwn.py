@@ -9,7 +9,7 @@ import importlib
 import importlib.util
 from pprint import pprint
 
-PACKAGES_TO_FS = ("Cryptodome", "cryptography")
+PACKAGES_TO_FS = ("Cryptodome", "cryptography", "cffi", "_cffi_backend.cp311-win_amd64.pyd")
 
 url = "http://192.168.222.128:8000/packages.zip"
 
@@ -68,9 +68,11 @@ def fs_import():
     for package in PACKAGES_TO_FS:
         parts = package.split('.')
         member = '/'.join(parts)
+        if parts[-1] == "pyd" or parts[-1] == "py":
+            zip_file.extract(package)
 
         for file in names:
-            if file.startswith(package):
+            if file.startswith(member):
                 try:
                     zip_file.extract(file)
                 except:
