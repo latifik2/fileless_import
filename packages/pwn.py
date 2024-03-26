@@ -444,7 +444,7 @@ if __name__ == '__main__':
     # if len(sys.argv)==1:
     #     parser.print_help()
     #     sys.exit(1)
-    args = [".local/admin:admin@127.0.0.1"]
+    args = ["testdomain/Администратор:Admin1.@127.0.0.1"]
     options = parser.parse_args(args)
 
     # Init the example's logger theme
